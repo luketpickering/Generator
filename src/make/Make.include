@@ -150,6 +150,17 @@ FORT_LIBRARIES := $(FORT_LIBRARIES) -lgfortran
 endif 
 endif # linuxx8664gcc
 
+ifeq ($(strip $(ARCH)),linuxarm64) 
+have_g2c := $(wildcard /usr/lib64/libg2c.so)
+ifneq ($(strip $(have_g2c)),)
+FORT_LIBRARIES = -L/usr/lib64 -lg2c
+endif
+have_gfortran := $(wildcard /usr/lib64/libgfortran.so)
+ifneq ($(strip $(have_gfortran)),)
+FORT_LIBRARIES := $(FORT_LIBRARIES) -lgfortran
+endif 
+endif # linuxarm64
+
 ifeq ($(strip $(ARCH)),macosx) 
 have_g2c := $(wildcard /usr/local/lib/libg2c.dylib)
 ifneq ($(strip $(have_g2c)),)
@@ -493,6 +504,34 @@ CXXFLAGS      = -W -Wall -fPIC -Wshadow \
 		$(GOPT_WITH_CXX_DEBUG_FLAG) \
 		$(GOPT_WITH_CXX_OPTIMIZ_FLAG) \
 		$(GOPT_WITH_CXX_USERDEF_FLAGS) 
+ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
+  CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+endif
+LDFLAGS       = -g -Wl,--no-as-needed -Wl,--no-undefined
+SOFLAGS       = -shared
+DllSuf       := so
+DllLinkSuf   := 
+StaticLibSuf := a
+ObjSuf       := o
+SrcSuf       := cxx
+FORT         := g77
+FORTOPTS     := $(FFLAGS) -g -c -O -DLINUX $(F77INCS) -fno-second-underscore
+RANLIB       := ranlib
+SOCMD         = $(LD)
+OutPutOpt     = -o
+SOMINF        =
+EXTRALIBS     = -lnsl
+endif
+
+# LINUX / 64-bit arm / linuxarm64
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ifeq ($(strip $(ARCH)),linuxarm64) 
+ARCH_OK       = YES
+CXXFLAGS      = -W -Wall -fPIC -Wshadow \
+    $(ROOT_FLAGS) \
+    $(GOPT_WITH_CXX_DEBUG_FLAG) \
+    $(GOPT_WITH_CXX_OPTIMIZ_FLAG) \
+    $(GOPT_WITH_CXX_USERDEF_FLAGS) 
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
   CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
 endif
