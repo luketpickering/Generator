@@ -21,15 +21,17 @@
 
 #include <Math/AllIntegrationTypes.h>
 
+#include <string>
+
 namespace genie {
 namespace utils {
 namespace gsl   {
 
   ROOT::Math::IntegrationOneDim::Type   
-       Integration1DimTypeFromString (string type);
+       Integration1DimTypeFromString (std::string type);
 
   ROOT::Math::IntegrationMultiDim::Type 
-       IntegrationNDimTypeFromString (string type);
+       IntegrationNDimTypeFromString (std::string type);
 
 } // namespace gsl
 } // namespace utils
