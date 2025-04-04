@@ -94,17 +94,20 @@ if(-e $BANNER_FILE) {
   close(BANNER);
 }
 
-# Check that $ROOTSYS is set
+# Check that ROOT can be seen
 #
-$ROOTSYS = $ENV{'ROOTSYS'};
-die ("*** Error *** The ROOTSYS environmental variable is not defined. Is ROOT installed?")
-unless defined $ROOTSYS;
+`hash root-config`;
+$HAVE_ROOT_CONFIG = $?;
+die ("*** Error *** Cannot find root-config. Is ROOT installed?")
+unless $HAVE_ROOT_CONFIG == 0;
 
 # Check whether ROOT itself was build with GSL enabled
 # (GENIE uses GSL via ROOT's MathMore library.)
 #
 {
-  $mathmore_lib = "$ROOTSYS/lib/libMathMore.so";
+  $root_libdir = `root-config --libdir`;
+  chomp($root_libdir);
+  $mathmore_lib = "$root_libdir/libMathMore.so";
   if( ! -f $mathmore_lib ) {
      die ("*** Error *** ROOT needs to be built with GSL/MathMore enabled.");
   }
