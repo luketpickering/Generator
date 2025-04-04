@@ -105,11 +105,9 @@ unless $HAVE_ROOT_CONFIG == 0;
 # (GENIE uses GSL via ROOT's MathMore library.)
 #
 {
-  $root_libdir = `root-config --libdir`;
-  chomp($root_libdir);
-  $mathmore_lib = "$root_libdir/libMathMore.so";
-  if( ! -f $mathmore_lib ) {
-     die ("*** Error *** ROOT needs to be built with GSL/MathMore enabled.");
+  chomp($has_mathmore = `root-config --has-mathmore`);
+  if ( $has_mathmore ne 'yes' ) {
+    die ("*** Error *** ROOT needs to be built with GSL/MathMore enabled.");
   }
 }
 
